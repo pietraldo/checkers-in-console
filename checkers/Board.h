@@ -1,10 +1,14 @@
 #pragma once
 #include <iostream>
+#include <vector>
+#include "Move.h"
 
 using namespace std;
 
 const int N = 8;
 enum pieces { WHITE = 1, BLACK, WHITE_KING, BLACK_KING };
+
+extern vector<Field> color_fields_print;
 
 enum colors {
 	color_white_field = 9,
@@ -17,17 +21,23 @@ enum colors {
 
 const bool turn_board = false;
 
+
 class Board
 {
 	int board[N*N/2];
+	int out_of_board = -1;
 
 public:
+	Board();
 	Board(int board[N*N]);
 	Board(int board[N][N]);
 
 	bool static is_it_black_field(int i, int j) { return (i + j) % 2 == 0; };
+	bool is_black(int i, int j);
+	bool is_white(int i, int j);
 
 	int& operator()(int i, int j);
+	int& operator[](string);
 
 	friend ostream& operator<<(ostream&, Board&);
 };

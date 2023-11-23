@@ -2,11 +2,33 @@
 #include <Windows.h>
 #include <iomanip>
 
-
+vector<Field> color_fields_print = {};
 
 int& Board::operator()(int i, int j)
 {
+	out_of_board = -1;
+	if (i<0 || j<0 || i>=N || j>=N)
+		return out_of_board;
+	if (!is_it_black_field(i, j))
+		return out_of_board;
 	return board[N/2 * i + j / 2 ];
+}
+int& Board::operator[](string s)
+{
+	return this->operator()(s[1] - '1', s[0] - 'a');
+}
+
+Board::Board()
+{
+	for (int i = 0; i < 32; i++)
+	{
+		if (i < 12)
+			board[i] = 1;
+		else if (i < 20)
+			board[i] = 0;
+		else
+			board[i] = 2;
+	}
 }
 
 Board::Board(int board[N*N])
@@ -41,6 +63,11 @@ ostream& operator<<(ostream& out, Board& p)
 			// setting color
 			int color_pawn = ((p(i, j) == WHITE || (p(i, j) == WHITE_KING))) ? color_white_pawn : color_black_pawn;
 			int color_field = (((i + j) % 2 == 0) ? color_black_field : color_white_field);
+			
+			for(int ii=0; ii<color_fields_print.size(); ii++)
+				if(color_fields_print[ii].i==i && color_fields_print[ii].j == j)
+					color_field = color_move;
+			
 			SetConsoleTextAttribute(hconsole, color_pawn + (color_field<<4));
 			if (Board::is_it_black_field(i,j))
 			{
@@ -76,4 +103,15 @@ ostream& operator<<(ostream& out, Board& p)
 	SetConsoleTextAttribute(hconsole, 15);//resetuje ustwaienia
 	cout << endl;
 	return out;
+}
+
+bool Board::is_black(int i, int j)
+{
+	int c=this->operator()(i, j);
+	return (c == 2 || c == 4);
+}
+bool Board::is_white(int i, int j)
+{
+	int c = this->operator()(i, j);
+	return (c == 1 || c == 3);
 }
