@@ -31,12 +31,14 @@ public:
 	Board();
 	Board(int board[N*N]);
 	Board(int board[N][N]);
+	Board(const Board&);
 
 	bool static is_it_black_field(int i, int j) { return (i + j) % 2 == 0; };
 	bool is_black(int i, int j);
 	bool is_white(int i, int j);
 
 	int& operator()(int i, int j);
+	int& operator()(Field);
 	int& operator[](string);
 
 	friend ostream& operator<<(ostream&, Board&);

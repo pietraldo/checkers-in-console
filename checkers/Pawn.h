@@ -13,14 +13,14 @@ bool generate_moves_pawn(list<Move>& l, Board& b, int i, int j);
 bool generate_moves_pawn_white(list<Move>& l, Board& b, int i, int j);
 bool generate_moves_pawn_black(list<Move>& l, Board& b, int i, int j);
 bool generate_moves_king(list<Move>& l, Board& b, int i, int j);
-bool generate_captures_pawn(list<Move>& l, Board& b, int i, int j);
-bool generate_captures_king(list<Move>& l, Board& b, int i, int j);
+bool generate_captures_pawn(list<Move>& l, Board& b, int i, int j, Move m);
+bool generate_captures_king(list<Move>& l, Board& b, int i, int j, Move m);
 
 void make_move(Board&, Move);
 void make_move_not_capture(Board&, Move);
 void make_move_capture(Board&, Move);
-void make_move_capture_pawn(Board&, Move);
-void make_move_capture_king(Board&, Move);
+//void make_move_capture_pawn(Board&, Move);
+//void make_move_capture_king(Board&, Move);
+void delete_pawn_between(Board&, Field, Field); // if is a pawn between field 1 and field 2 there will be deleted field 1 and field 2 must be on the same diagonal
 
-// function to avoid duplicating code
-bool help_function1(list<Move>& l, Board& b, int color, bool (*function_kings)(list<Move>&, Board&, int, int), bool (*function_pawns)(list<Move>&, Board&, int, int));
+

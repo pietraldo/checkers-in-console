@@ -1,2 +1,5 @@
 ﻿  Pawn.cpp
+C:\Users\pietr\Documents\programowanie\checkers\checkers\Pawn.cpp(72,40): warning C4267: "inicjowanie": konwersja z "size_t" do "int", możliwa utrata danych
+C:\Users\pietr\Documents\programowanie\checkers\checkers\Pawn.cpp(41,6): warning C4101: "x": lokalna zmienna, do której nie istnieje odwołanie
+C:\Users\pietr\Documents\programowanie\checkers\checkers\Pawn.cpp(42,6): warning C4101: "num": lokalna zmienna, do której nie istnieje odwołanie
   checkers.vcxproj -> C:\Users\pietr\Documents\programowanie\checkers\x64\Debug\checkers.exe

@@ -13,6 +13,10 @@ int& Board::operator()(int i, int j)
 		return out_of_board;
 	return board[N/2 * i + j / 2 ];
 }
+int& Board::operator()(Field f)
+{
+	return this->operator()(f.i,f.j);
+}
 int& Board::operator[](string s)
 {
 	return this->operator()(s[1] - '1', s[0] - 'a');
@@ -47,6 +51,14 @@ Board::Board(int board[N][N])
 		{
 			this->operator()(i, j) = board[i][j];
 		}
+	}
+}
+
+Board::Board(const Board& b)
+{
+	for (int i = 0; i < N * N / 2; i++)
+	{
+		board[i] = b.board[i];
 	}
 }
 
