@@ -9,11 +9,12 @@
 #include "Board.h"
 #include "Move.h"
 #include "Pawn.h"
+#include "Bot.h"
 
 using namespace std;
 
 void move_player(Board&, int);
-void move_computer(Board&, int);
+void move_computer(Board&, Bot&);
 void double_captures(Board&, Move);
 void double_captures_computer(Board&, Move);
 void promote_pawns(Board&);
@@ -23,9 +24,12 @@ Move read_move(Board&, list<Move>& possible_moves);
 int main()
 {
 	int aa[64] = { 0 };
+	//Board b=Board();
 	Board b=Board(aa);
-	b["f6"] = 2;
+	b["c3"] = 2;
 	b["d6"] = 1;
+	b["e7"] = 2;
+	b["g7"] = 2;
 	b["d2"] = 2;
 	b["e7"] = 2;
 	b["c5"] = 2;
@@ -34,13 +38,16 @@ int main()
 	b["g3"] = 2;
 	b["b6"] = 1;
 	b["g7"] = 3;
+
 	int who_move = WHITE;
+	Bot bot(BLACK);
 
 	while (!is_end_of_game(b))
 	{
 		system("cls");
 		promote_pawns(b);
 		cout << b;
+		cout<<"Evaluate: "<<bot.Evaluate(b)<<endl;
 		color_fields_print.clear();
 		if (who_move == WHITE)
 		{
@@ -53,8 +60,8 @@ int main()
 		else
 		{
 			cout << "Move computer" << endl;
-			this_thread::sleep_for(std::chrono::seconds(10));
-			move_computer(b, BLACK);
+			this_thread::sleep_for(std::chrono::seconds(2));
+			move_computer(b, bot);
 			who_move = WHITE;
 		}
 		
@@ -70,40 +77,9 @@ void move_player(Board& b, int color)
 
 	Move players_move = read_move(b, l);
 	make_move(b, players_move);
-	/*if (players_move.capture)
-		double_captures(b, players_move);*/
 }
 
-/*void double_captures(Board& b, Move m)
-{
-	system("cls");
-	cout << b;
-	list<Move> l;
-	if (b(m.i2, m.j2) < 2)
-		generate_captures_pawn(l,b, m.i2, m.j2);
-	else
-		generate_captures_king(l,b,m.i2,m.j2);
-	if (l.size() == 0)
-		return;
-	Move players_move = read_move(b, l);
-	make_move(b, players_move);
-	if (players_move.capture)
-		double_captures(b, players_move);
-}
 
-void double_captures_computer(Board& b, Move m)
-{
-	list<Move> l;
-	if (b(m.i2, m.j2) < 2)
-		generate_captures_pawn(l, b, m.i2, m.j2);
-	else
-		generate_captures_king(l, b, m.i2, m.j2);
-	if (l.size() == 0)
-		return;
-
-	make_move(b, l.front());
-	double_captures_computer(b, l.front());
-}*/
 
 Move read_move(Board& b, list<Move>& possible_moves)
 {
@@ -121,10 +97,9 @@ Move read_move(Board& b, list<Move>& possible_moves)
 		move_p.add(Field(player_move[i + 1] - '1', player_move[i] - 'a'));
 		i++;
 	}
-	//Move a = Move(possible_moves.front());
-	//
+
 	// checking if move is in the list of moves
-	for (auto move : possible_moves)
+	for (auto &move : possible_moves)
 	{
 		cout << move<<endl;
 		if (move == move_p)
@@ -134,17 +109,13 @@ Move read_move(Board& b, list<Move>& possible_moves)
 	cout <<endl<< "Move is not correct" << endl;
 	system("cls");
 	cout << b;
-	read_move(b,possible_moves);
+	return read_move(b,possible_moves);
 }
 
-void move_computer(Board& b, int color)
+void move_computer(Board& b, Bot& bot)
 {
-	cout << "Avaible moves" << endl;
-	list<Move> l;
-	generate_all_moves(l, b, color);
-	make_move(b, l.front());
-	/*if (l.front().capture)
-		double_captures_computer(b, l.front());*/
+	Move bot_move = bot.getBestMove(b);
+	make_move(b, bot_move);
 }
 
 void promote_pawns(Board& b)
