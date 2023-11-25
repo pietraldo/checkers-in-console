@@ -17,15 +17,16 @@ void move_player(Board&, int);
 void move_computer(Board&, Bot&);
 void double_captures(Board&, Move);
 void double_captures_computer(Board&, Move);
-void promote_pawns(Board&);
 bool is_end_of_game(Board&);
 Move read_move(Board&, list<Move>& possible_moves);
+int num(string move);
+
 
 int main()
 {
 	int aa[64] = { 0 };
-	//Board b=Board();
-	Board b=Board(aa);
+	Board b=Board();
+	/*Board b=Board(aa);
 	b["c3"] = 2;
 	b["d6"] = 1;
 	b["e7"] = 2;
@@ -33,11 +34,14 @@ int main()
 	b["d2"] = 2;
 	b["e7"] = 2;
 	b["c5"] = 2;
-	b["c3"] = 2;
+	b["c3"] = 1;
 	b["e3"] = 2;
-	b["g3"] = 2;
-	b["b6"] = 1;
-	b["g7"] = 3;
+	b["g3"] = 1;
+	b["b6"] = 2;
+	
+	cout << b;*/
+
+	b["b6"] = 3;
 
 	int who_move = WHITE;
 	Bot bot(BLACK);
@@ -45,9 +49,9 @@ int main()
 	while (!is_end_of_game(b))
 	{
 		system("cls");
-		promote_pawns(b);
 		cout << b;
 		cout<<"Evaluate: "<<bot.Evaluate(b)<<endl;
+		cout<<"Bot evaluate: "<<Bot::bot_eval<<endl;
 		color_fields_print.clear();
 		if (who_move == WHITE)
 		{
@@ -60,7 +64,7 @@ int main()
 		else
 		{
 			cout << "Move computer" << endl;
-			this_thread::sleep_for(std::chrono::seconds(2));
+			//this_thread::sleep_for(std::chrono::seconds(2));
 			move_computer(b, bot);
 			who_move = WHITE;
 		}
@@ -84,13 +88,35 @@ void move_player(Board& b, int color)
 Move read_move(Board& b, list<Move>& possible_moves)
 {
 	cout << "Avaible moves:" << endl;
+	int i = 0; 
 	for (auto a : possible_moves)
-		cout << a;
+		cout <<++i<<". " << a;
 	cout << "Your move: ";
 	int xx;
 	
 	string player_move;
 	getline(cin, player_move);
+
+	int number = num(player_move);
+
+	if (number >0 && number <=possible_moves.size())
+	{
+		int j=1;
+		for (auto& move : possible_moves)
+		{
+			if (j++==number)
+				return move;
+		}
+	}
+
+	if (player_move.length() == 2)
+	{
+		string player_move2;
+		getline(cin, player_move2);
+		player_move += " " + player_move2;
+	}
+	
+	// making move from player move
 	Move move_p;
 	for (int i = 0; i < player_move.length(); i+=2)
 	{
@@ -114,20 +140,28 @@ Move read_move(Board& b, list<Move>& possible_moves)
 
 void move_computer(Board& b, Bot& bot)
 {
-	Move bot_move = bot.getBestMove(b);
+	Move bot_move = bot.pickBestMove(b);
 	make_move(b, bot_move);
 }
 
-void promote_pawns(Board& b)
+int num(string move)
 {
-	for (int j = 0; j < 4; j++)
+	int x=0;
+	for (int i = 0; i < move.length(); i++)
 	{
-		if (b(0, j * 2) == BLACK)
-			b(0, j * 2) = 4;
-		if (b(N - 1, j * 2+1) == WHITE)
-			b(N-1, j * 2+1) = 3;
+		if (move[i] - '0' >= 0 && move[i] - '0' <= 9)
+		{
+			x *= 10;
+			x += (move[i] - '0');
+		}
+		else
+		{
+			break;
+		}
 	}
+	return x;
 }
+
 
 bool is_end_of_game(Board& b)
 {

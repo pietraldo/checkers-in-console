@@ -63,6 +63,7 @@ Move Bot::getBestMoveBlack(Board& b)
 		Board b2 = Board(b);
 		make_move(b2, m);
 		float current_eval=Evaluate(b2);
+		cout << m << " -> " << current_eval<<endl;
 		if (best_eval > current_eval)
 		{
 			best_eval = current_eval;
@@ -72,4 +73,109 @@ Move Bot::getBestMoveBlack(Board& b)
 
 
 	return best;
+}
+
+void Bot::generateAllMovesToDepth(Board& b, int max_depth, int color, int depth)
+{
+	
+	if (depth >= max_depth)
+	{
+		cout << "Depth " << depth << ": " << endl;
+		cout << b << endl;
+		return;
+	}
+		
+
+	list<Move> l;
+	generate_all_moves(l, b, color);
+	for (auto move : l)
+	{
+		Board b2 = Board(b);
+		make_move(b2, move);
+		generateAllMovesToDepth(b2, max_depth, color == WHITE ? BLACK : WHITE, depth+1);
+	}
+}
+
+
+int Bot::aa = 0;
+float Bot::bot_eval = 0;
+float Bot::evaluateToDepth(Board& b, int max_depth, int color, float alpha, float beta, int depth)
+{
+	aa++;
+	//cout << b;
+	if (depth >= max_depth)
+	{
+		return Evaluate(b);
+	}
+
+	list<Move> l;
+	generate_all_moves(l, b, color);
+
+	float best=color==WHITE?-1000000:10000000;
+	float value;
+
+	for (auto move : l)
+	{
+		Board b2 = Board(b);
+		make_move(b2, move);
+		value=evaluateToDepth(b2, max_depth, color == WHITE ? BLACK : WHITE, alpha,beta,depth+1);
+
+		if (color == WHITE)
+		{
+			if (value > best)
+			{
+				best = value;
+				alpha = value;
+			}
+		}
+		else
+		{
+			if (value < best)
+			{
+				best = value;
+				beta = value;
+			}
+		}
+
+		if (alpha > beta)
+			break;
+	}
+	
+	return best;
+}
+
+
+Move Bot::pickBestMove(Board& b)
+{
+	Move best_move;
+	float best_eval=color==WHITE?-10000000:10000000;
+	float eval;
+
+	list<Move> l;
+	generate_all_moves(l, b, color);
+	for (auto move : l)
+	{
+		Board b2 = Board(b);
+		make_move(b2, move);
+		eval=evaluateToDepth(b2, 8, color == WHITE ? BLACK : WHITE, -1000000,10000000);
+
+		if (color == WHITE)
+		{
+			if (eval > best_eval)
+			{
+				best_eval = eval;
+				best_move = Move(move);
+			}
+		}
+		else
+		{
+			if (eval < best_eval)
+			{
+				best_eval = eval;
+				best_move = Move(move);
+			}
+		}
+	}
+	bot_eval = best_eval;
+	return best_move;
 }

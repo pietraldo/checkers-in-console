@@ -274,6 +274,18 @@ void make_move(Board &b, Move move)
 		make_move_capture(b, move);
 	else
 		make_move_not_capture(b, move);
+
+	promote_pawns(b);
+}
+void promote_pawns(Board& b)
+{
+	for (int j = 0; j < 4; j++)
+	{
+		if (b(0, j * 2) == BLACK)
+			b(0, j * 2) = 4;
+		if (b(N - 1, j * 2 + 1) == WHITE)
+			b(N - 1, j * 2 + 1) = 3;
+	}
 }
 
 void make_move_not_capture(Board &b, Move move)
