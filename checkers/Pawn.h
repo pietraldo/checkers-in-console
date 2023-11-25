@@ -16,6 +16,10 @@ bool generate_moves_king(list<Move>& l, Board& b, int i, int j);
 bool generate_captures_pawn(list<Move>& l, Board& b, int i, int j, Move m);
 bool generate_captures_king(list<Move>& l, Board& b, int i, int j, Move m);
 
+bool is_any_capture_on_board(Board& b, int color);
+bool is_any_capture_pawn(Board& b, int i, int j);
+bool is_any_capture_king(Board& b, int i, int j);
+
 void promote_pawns(Board&);
 
 void make_move(Board&, Move);

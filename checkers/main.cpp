@@ -17,18 +17,18 @@ void move_player(Board&, int);
 void move_computer(Board&, Bot&);
 void double_captures(Board&, Move);
 void double_captures_computer(Board&, Move);
-bool is_end_of_game(Board&);
+bool is_end_of_game(Board&, int who_move);
 Move read_move(Board&, list<Move>& possible_moves);
 int num(string move);
 
 //if even it gives better eval for white
-int MAX_DEPTH = 8;
+int MAX_DEPTH = 5;
 
 
 int main()
 {
 	int aa[64] = { 0 };
-	Board b=Board();
+	Board b=Board(aa);
 	/*Board b=Board(aa);
 	b["c3"] = 2;
 	b["d6"] = 1;
@@ -54,16 +54,88 @@ int main()
 	b["g7"] = 2;
 	b["h6"] = 2;*/
 
+	// position from zuzia game
+	b["b8"] = 2;
+	b["c7"] = 2;
+	b["a7"] = 2;
+	b["d8"] = 2;
+	b["f8"] = 2;
+	b["g7"] = 2;
+	b["h8"] = 2;
+	b["d6"] = 2;
+	b["f4"] = 2;
+	b["c5"] = 2;
+	b["a5"] = 1;
+	b["a3"] = 1;
+	b["a1"] = 1;
+	b["b2"] = 1;
+	b["c1"] = 1;
+	b["d2"] = 1;
+	b["f2"] = 1;
+	b["e1"] = 1;
+	b["g1"] = 1;
+	b["h2"] = 1;
+	// kings and draw
+	/*b["f4"] = 4;
+	b["d8"] = 3;
+	b["h8"] = 2;
+	b["g7"] = 2;*/
+	// win because no moves
+	/*b["b6"] = 2;
+	b["d6"] = 2;
+	b["f6"] = 2;
+	b["h6"] = 2;
+	b["a5"] = 2;
+	b["c5"] = 2;
+	b["e5"] = 2;
+	b["g5"] = 2;
+	b["b8"] = 2;
+	b["d8"] = 2;
+	b["a3"] = 1;
+	b["c3"] = 1;
+	b["e3"] = 1;
+	b["g3"] = 1;
+	b["b4"] = 1;
+	b["d4"] = 1;
+	b["f4"] = 1;
+	b["h4"] = 1;
+	b["c1"] = 1;
+	b["e1"] = 1;
+	b["g1"] = 1;*/
+
+	/*b["b8"] = 2;
+	b["c7"] = 2;
+	b["a7"] = 2;
+	b["d8"] = 2;
+	b["f8"] = 2;
+	b["g7"] = 2;
+	b["h8"] = 2;
+	b["e5"] = 2;
+	b["f4"] = 2;
+	b["c5"] = 2;
+	b["a5"] = 1;
+	b["a3"] = 1;
+	b["a1"] = 1;
+	b["b2"] = 1;
+	b["c1"] = 1;
+	b["d2"] = 1;
+	b["e3"] = 1;
+	b["e1"] = 1;
+	b["g1"] = 1;
+	b["h2"] = 1;*/
+
+
 	int who_move = WHITE;
 	Bot bot(BLACK);
-
-	while (!is_end_of_game(b))
+	//cout << endl << bot.is_possition_stable(b, BLACK);
+	while (!is_end_of_game(b, who_move))
 	{
-		system("cls");
+		//system("cls");
 		cout << b;
 		cout<<"Evaluate: "<<bot.Evaluate(b)<<endl;
 		cout<<"Bot evaluate: "<<Bot::bot_eval<<endl;
-		cout <<"Number of evaluated positions: " << Bot::aa << endl;
+		cout <<"Number of evaluated positions: " << Bot::number_of_evaluate_function << endl;
+		
 		color_fields_print.clear();
 		if (who_move == WHITE)
 		{
@@ -75,15 +147,14 @@ int main()
 		}
 		else
 		{
+			Bot::number_of_evaluate_function = 0;
 			cout << "Move computer" << endl;
-			//this_thread::sleep_for(std::chrono::seconds(2));
 			move_computer(b, bot);
 			who_move = WHITE;
 		}
 		
 	}
-	cout << b;
-	cout << endl << "koniec gry"<<endl;
+	
 }
 
 void move_player(Board& b, int color)
@@ -156,6 +227,8 @@ void move_computer(Board& b, Bot& bot)
 	make_move(b, bot_move);
 }
 
+
+// conwerting string to number
 int num(string move)
 {
 	int x=0;
@@ -175,7 +248,7 @@ int num(string move)
 }
 
 
-bool is_end_of_game(Board& b)
+bool is_end_of_game(Board& b, int who_move)
 {
 	bool white=false;
 	bool black=false;
@@ -189,18 +262,53 @@ bool is_end_of_game(Board& b)
 				white = true;
 		}
 	}
-	return !(white && black);
+
+	bool end = false;
+	list<Move> l;
+	vector<Field> color_fields_print2 = color_fields_print;
+	if (!generate_all_moves(l, b, who_move)) // loses who's move it is
+	{
+		system("cls");
+		cout << b;
+		cout << (who_move==WHITE?"BLACK":"WHITE") << " WINS!!!" << endl;
+		end = true;
+	}
+	else if (!black) // wins white
+	{
+		system("cls");
+		cout << b;
+		cout << "WHITE WINS!!!" << endl;
+		end = true;
+	}
+	else if(!white) // wins black
+	{
+		system("cls");
+		cout << b;
+		cout << "BLACK WINS!!!" << endl;
+		end = true;
+	}
+	else if (draw_after_moves <= b.moves_with_kings) //draw
+	{
+		system("cls");
+		cout << b;
+		cout << "DRAW!!!" << endl;
+		end = true;
+	}
+
+	color_fields_print = color_fields_print2;
+
+	return end;
 }
 
 
 /*
  promotes pawn only at the end of move ( there is not somthing like go last row promote and capture as a  king
 
- there is obligatory capture of maximum pawns
+ there is obligatory capture of maximum pawns or kings
 
  pawn and kings can capture forward and backwords
 
-
+ after draw_move_kings there is draw
 
 
 */

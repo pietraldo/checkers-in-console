@@ -28,6 +28,9 @@ class Board
 	int out_of_board = -1;
 
 public:
+
+	int moves_with_kings = 0;
+	
 	Board();
 	Board(int board[N*N]);
 	Board(int board[N][N]);

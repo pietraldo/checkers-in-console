@@ -56,6 +56,7 @@ Board::Board(int board[N][N])
 
 Board::Board(const Board& b)
 {
+	moves_with_kings = b.moves_with_kings;
 	for (int i = 0; i < N * N / 2; i++)
 	{
 		board[i] = b.board[i];

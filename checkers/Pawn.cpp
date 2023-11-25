@@ -40,29 +40,21 @@ bool generate_all_captures(list<Move>& l, Board& b, int color)
 
 	int x;
 	int num;
-	//cin >> x;
 	while (captures.size() > 0)
 	{
 		Move m = captures.front();
 		captures.pop_front();
 		Board b2 = Board(b);
 		make_move(b2, m);
-		//cout << m << endl;
-		//cout << b2<<endl;
-		//int x;
-		//cin >> x;
+		
 		if (b(m.fields[0]) <= 2 && !generate_captures_pawn(captures,b2, m.fields.rbegin()->i, m.fields.rbegin()->j,m)) // pawns
 		{
-			//cout << "aaaaaa";
 			no_more_captures.push_back(m);
 		}
 		if (b(m.fields[0]) > 2 && !generate_captures_king(captures,b2, m.fields.rbegin()->i, m.fields.rbegin()->j,m)) // kings
 		{
-			//cout << "aaaaaaaa";
 			no_more_captures.push_back(m);
 		}
-		//cout << m;
-		//cin >> x;
 	}
 
 	// finding max capture
@@ -84,10 +76,6 @@ bool generate_all_captures(list<Move>& l, Board& b, int color)
 	// adding to list
 	for (auto i : captures2)
 		l.push_back(i);
-
-
-	
-	
 
 	return added;
 }
@@ -271,10 +259,16 @@ void make_move(Board &b, Move move)
 		color_fields_print.push_back(move.fields[i]);
 
 	if (move.capture)
+	{
+		b.moves_with_kings = 0;
 		make_move_capture(b, move);
+	}
 	else
+	{
+		if(b(move.fields[0].i, move.fields[0].j) >2)
+			b.moves_with_kings++;
 		make_move_not_capture(b, move);
-
+	}
 	promote_pawns(b);
 }
 void promote_pawns(Board& b)
@@ -302,30 +296,83 @@ void make_move_capture(Board& b , Move move)
 		delete_pawn_between(b,move.fields[i+1], move.fields[i]);
 		b(move.fields[i]) = 0;
 	}
-	/*if (b(move.i1, move.j1) > 2)
-		make_move_capture_king(b, move);
-	else
-		make_move_capture_pawn(b, move);*/
 }
-void make_move_capture_pawn(Board& b, Move move)
-{
-	//b(move.i2, move.j2) = b(move.i1, move.j1);
-	//b(move.i1, move.j1) = 0;
-	//b(move.i1 + (move.i2 - move.i1) / 2, move.j1 + (move.j2 - move.j1) / 2) = 0; // capturing
-}
-void make_move_capture_king(Board& b, Move move)
-{
-	/*b(move.i2, move.j2) = b(move.i1, move.j1);
-	b(move.i1, move.j1) = 0;
 
-	int k1 = (move.i2 - move.i1) / abs(move.i2 - move.i1);
-	int k2 = (move.j2 - move.j1) / abs(move.j2 - move.j1);
-	int k = 1;
-	while (b(move.i1 + k1 * k, move.j1 + k2 * k) == 0)
+bool is_any_capture_on_board(Board& b, int color)
+{
+	for (int i = 0; i < N; i++)
 	{
-		k++;
+		for (int j = 0; j < N; j++)
+		{
+			if (!Board::is_it_black_field(i, j) || b(i, j) == 0)
+				continue;
+			if (b(i, j) % 2 != color%2)
+				continue;
+
+			// b(i,j) is a king
+			if (b(i, j) > 2 && is_any_capture_king(b, i, j))
+				return true;
+
+			// b(i,j) is a normal pawn
+			if (b(i, j) <= 2 && is_any_capture_pawn(b, i, j))
+				return true;
+			
+		}
 	}
-	b(move.i1 + k1 * k, move.j1 + k2 * k) = 0;*/
+	return false;
+}
+
+bool is_any_capture_pawn(Board& b, int i, int j)
+{
+	auto localFunction = [&](int k1, int k2)
+	{
+		// checking if field b(i+k1*2, j+k2*2) is empty and on field b(i + k1, j + k2) is opponent
+		if (b(i + k1 * 2, j + k2 * 2) != 0 || b(i + k1, j + k2) == 0 || b(i + k1, j + k2) % 2 == b(i, j) % 2)
+			return false;
+		return true;
+	};
+
+	if (localFunction(-1, -1))
+		return true;
+	if (localFunction(-1, 1))
+		return true;
+	if (localFunction(1, -1))
+		return true;
+	if (localFunction(1, 1))
+		return true;
+
+	return false;
+}
+bool is_any_capture_king(Board& b, int i, int j)
+{
+	auto localFunction = [&](int k1, int k2)
+	{
+		int k = 1;
+		// going in the direction while the field is empty
+		while (b(i + k * k1, j + k * k2) == 0)
+		{
+			k++;
+		}
+		// going out of board
+		if (b(i + k * k1, j + k * k2) == -1)
+			return false;
+		// pawn is the same color 
+		if (b(i + k * k1, j + k * k2) % 2 == b(i, j) % 2)
+			return false;
+
+		return true;
+	};
+
+	if (localFunction(-1, -1))
+		return true;
+	if (localFunction(-1, 1))
+		return true;
+	if (localFunction(1, -1))
+		return true;
+	if (localFunction(1, 1))
+		return true;
+
+	return false;
 }
 
 void delete_pawn_between(Board& b, Field f1, Field f2)
