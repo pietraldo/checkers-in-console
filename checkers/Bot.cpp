@@ -157,7 +157,7 @@ Move Bot::pickBestMove(Board& b)
 	{
 		Board b2 = Board(b);
 		make_move(b2, move);
-		eval=evaluateToDepth(b2, 8, color == WHITE ? BLACK : WHITE, -1000000,10000000);
+		eval=evaluateToDepth(b2, 14, color == WHITE ? BLACK : WHITE, -1000000,10000000);
 
 		if (color == WHITE)
 		{

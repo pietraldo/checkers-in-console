@@ -1,0 +1,20 @@
+Depth	Boards_counted	Evaluation
+10	551.054		0.66667
+11	1.710.568	0.33333
+12	4.724.785	1.66667
+13	13.913.624	1.00000
+14	42.864.167	2.33333
+
+
+Position: 
+b["a1"] = 1;
+b["d2"] = 1;
+b["f2"] = 1;
+b["g1"] = 1;
+b["h2"] = 1;
+b["a3"] = 2;
+b["f8"] = 2;
+b["g7"] = 2;
+b["h6"] = 2;
+
+and after white move d2 -> e3 computer counts

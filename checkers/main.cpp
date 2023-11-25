@@ -25,7 +25,7 @@ int num(string move);
 int main()
 {
 	int aa[64] = { 0 };
-	Board b=Board();
+	Board b=Board(aa);
 	/*Board b=Board(aa);
 	b["c3"] = 2;
 	b["d6"] = 1;
@@ -41,7 +41,15 @@ int main()
 	
 	cout << b;*/
 
-	b["b6"] = 3;
+	b["a1"] = 1;
+	b["d2"] = 1;
+	b["f2"] = 1;
+	b["g1"] = 1;
+	b["h2"] = 1;
+	b["a3"] = 2;
+	b["f8"] = 2;
+	b["g7"] = 2;
+	b["h6"] = 2;
 
 	int who_move = WHITE;
 	Bot bot(BLACK);
@@ -52,6 +60,7 @@ int main()
 		cout << b;
 		cout<<"Evaluate: "<<bot.Evaluate(b)<<endl;
 		cout<<"Bot evaluate: "<<Bot::bot_eval<<endl;
+		cout <<"Number of evaluated positions: " << Bot::aa << endl;
 		color_fields_print.clear();
 		if (who_move == WHITE)
 		{

@@ -1,3 +1,4 @@
-﻿  main.cpp
-C:\Users\pietr\Documents\programowanie\checkers\checkers\main.cpp(95,6): warning C4101: "xx": lokalna zmienna, do której nie istnieje odwołanie
+﻿  Bot.cpp
+C:\Users\pietr\Documents\programowanie\checkers\checkers\Bot.cpp(114,12): warning C4244: "inicjowanie": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\pietr\Documents\programowanie\checkers\checkers\Bot.cpp(151,17): warning C4244: "inicjowanie": konwersja z "int" do "float", możliwa utrata danych
   checkers.vcxproj -> C:\Users\pietr\Documents\programowanie\checkers\x64\Debug\checkers.exe
