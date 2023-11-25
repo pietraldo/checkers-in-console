@@ -121,10 +121,13 @@ float Bot::evaluateToDepth(Board& b, int max_depth, int color, float alpha, floa
 
 	for (auto move : l)
 	{
+		// evaluating next moves
 		Board b2 = Board(b);
 		make_move(b2, move);
 		value=evaluateToDepth(b2, max_depth, color == WHITE ? BLACK : WHITE, alpha,beta,depth+1);
 
+
+		// alpha beha pruninung
 		if (color == WHITE)
 		{
 			if (value > best)
@@ -272,8 +275,8 @@ Move Bot::pickBestMoveMultiThreading(Board& b)
 
 bool Bot::is_possition_stable(Board& b, int color)
 {
-	return !is_any_capture_on_board(b, color);
+	//return !is_any_capture_on_board(b, color);
 	//return !(is_any_capture_on_board(b, WHITE) || is_any_capture_on_board(b, BLACK));
 	 
-	//return true;
+	return true;
 }

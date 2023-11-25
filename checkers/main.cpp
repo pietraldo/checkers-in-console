@@ -22,13 +22,13 @@ Move read_move(Board&, list<Move>& possible_moves);
 int num(string move);
 
 //if even it gives better eval for white
-int MAX_DEPTH = 5;
+int MAX_DEPTH = 8;
 
 
 int main()
 {
 	int aa[64] = { 0 };
-	Board b=Board(aa);
+	Board b=Board();
 	/*Board b=Board(aa);
 	b["c3"] = 2;
 	b["d6"] = 1;
@@ -55,7 +55,7 @@ int main()
 	b["h6"] = 2;*/
 
 	// position from zuzia game
-	b["b8"] = 2;
+	/*b["b8"] = 2;
 	b["c7"] = 2;
 	b["a7"] = 2;
 	b["d8"] = 2;
@@ -74,7 +74,7 @@ int main()
 	b["f2"] = 1;
 	b["e1"] = 1;
 	b["g1"] = 1;
-	b["h2"] = 1;
+	b["h2"] = 1;*/
 	// kings and draw
 	/*b["f4"] = 4;
 	b["d8"] = 3;
@@ -124,13 +124,30 @@ int main()
 	b["g1"] = 1;
 	b["h2"] = 1;*/
 
+	/*b["a7"] = 2;
+	b["b8"] = 2;
+	b["d8"] = 2;
+	b["e7"] = 2;
+	b["e5"] = 2;
+	b["f4"] = 2;
+	b["h8"] = 2;
+	b["b6"] = 1;
+	b["c5"] = 1;
+	b["c3"] = 1;
+	b["c1"] = 1;
+	b["d2"] = 1;
+	b["f2"] = 1;
+	b["h2"] = 1;
+	b["b4"] = 1;
+	b["b2"] = 1;*/
+
 
 	int who_move = WHITE;
 	Bot bot(BLACK);
 	//cout << endl << bot.is_possition_stable(b, BLACK);
 	while (!is_end_of_game(b, who_move))
 	{
-		//system("cls");
+		system("cls");
 		cout << b;
 		cout<<"Evaluate: "<<bot.Evaluate(b)<<endl;
 		cout<<"Bot evaluate: "<<Bot::bot_eval<<endl;
@@ -165,8 +182,6 @@ void move_player(Board& b, int color)
 	Move players_move = read_move(b, l);
 	make_move(b, players_move);
 }
-
-
 
 Move read_move(Board& b, list<Move>& possible_moves)
 {
@@ -224,6 +239,12 @@ Move read_move(Board& b, list<Move>& possible_moves)
 void move_computer(Board& b, Bot& bot)
 {
 	Move bot_move = bot.pickBestMove(b, MAX_DEPTH);
+	/*cout <<"BOT move depth: 3 " << bot_move;
+	for (int i = 4; i <9; i++)
+	{
+		bot_move = bot.pickBestMove(b, i);
+		cout << "BOT move depth: "<<i<<" " << bot_move;
+	}*/
 	make_move(b, bot_move);
 }
 
