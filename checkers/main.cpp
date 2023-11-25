@@ -21,11 +21,14 @@ bool is_end_of_game(Board&);
 Move read_move(Board&, list<Move>& possible_moves);
 int num(string move);
 
+//if even it gives better eval for white
+int MAX_DEPTH = 8;
+
 
 int main()
 {
 	int aa[64] = { 0 };
-	Board b=Board(aa);
+	Board b=Board();
 	/*Board b=Board(aa);
 	b["c3"] = 2;
 	b["d6"] = 1;
@@ -41,7 +44,7 @@ int main()
 	
 	cout << b;*/
 
-	b["a1"] = 1;
+	/*b["a1"] = 1;
 	b["d2"] = 1;
 	b["f2"] = 1;
 	b["g1"] = 1;
@@ -49,7 +52,7 @@ int main()
 	b["a3"] = 2;
 	b["f8"] = 2;
 	b["g7"] = 2;
-	b["h6"] = 2;
+	b["h6"] = 2;*/
 
 	int who_move = WHITE;
 	Bot bot(BLACK);
@@ -149,7 +152,7 @@ Move read_move(Board& b, list<Move>& possible_moves)
 
 void move_computer(Board& b, Bot& bot)
 {
-	Move bot_move = bot.pickBestMove(b);
+	Move bot_move = bot.pickBestMove(b, MAX_DEPTH);
 	make_move(b, bot_move);
 }
 

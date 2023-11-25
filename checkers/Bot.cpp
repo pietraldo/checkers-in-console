@@ -145,7 +145,7 @@ float Bot::evaluateToDepth(Board& b, int max_depth, int color, float alpha, floa
 }
 
 
-Move Bot::pickBestMove(Board& b)
+Move Bot::pickBestMove(Board& b, int max_depth)
 {
 	Move best_move;
 	float best_eval=color==WHITE?-10000000:10000000;
@@ -157,7 +157,7 @@ Move Bot::pickBestMove(Board& b)
 	{
 		Board b2 = Board(b);
 		make_move(b2, move);
-		eval=evaluateToDepth(b2, 14, color == WHITE ? BLACK : WHITE, -1000000,10000000);
+		eval=evaluateToDepth(b2, max_depth, color == WHITE ? BLACK : WHITE, -1000000,10000000);
 
 		if (color == WHITE)
 		{
@@ -172,6 +172,89 @@ Move Bot::pickBestMove(Board& b)
 			if (eval < best_eval)
 			{
 				best_eval = eval;
+				best_move = Move(move);
+			}
+		}
+	}
+	bot_eval = best_eval;
+	return best_move;
+}
+
+void Bot::evaluateToDepthMultiThreading(Board& b, int max_depth, int color, float alpha, float beta, float& answer, int depth)
+{
+	aa++;
+	//cout << b;
+	if (depth >= max_depth)
+	{
+		answer= Evaluate(b);
+		return;
+	}
+
+	list<Move> l;
+	generate_all_moves(l, b, color);
+
+	float best = color == WHITE ? -1000000 : 10000000;
+	float value;
+
+	for (auto move : l)
+	{
+		Board b2 = Board(b);
+		make_move(b2, move);
+		value = evaluateToDepth(b2, max_depth, color == WHITE ? BLACK : WHITE, alpha, beta, depth + 1);
+
+		if (color == WHITE)
+		{
+			if (value > best)
+			{
+				best = value;
+				alpha = value;
+			}
+		}
+		else
+		{
+			if (value < best)
+			{
+				best = value;
+				beta = value;
+			}
+		}
+
+		if (alpha > beta)
+			break;
+	}
+
+	answer = best;
+}
+
+Move Bot::pickBestMoveMultiThreading(Board& b)
+{
+	Move best_move;
+	float best_eval = color == WHITE ? -10000000 : 10000000;
+	float eval;
+
+	list<Move> l;
+	generate_all_moves(l, b, color);
+	for (auto move : l)
+	{
+		Board b2 = Board(b);
+		make_move(b2, move);
+		float answer;
+		
+		evaluateToDepthMultiThreading(b2, 10, color == WHITE ? BLACK : WHITE, -1000000, 10000000, answer);
+		
+		if (color == WHITE)
+		{
+			if (answer > best_eval)
+			{
+				best_eval = answer;
+				best_move = Move(move);
+			}
+		}
+		else
+		{
+			if (answer < best_eval)
+			{
+				best_eval = answer;
 				best_move = Move(move);
 			}
 		}
