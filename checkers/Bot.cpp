@@ -49,6 +49,9 @@ float Bot::evaluateToDepth(Board& b, int max_depth, int color, float alpha, floa
 {
 	number_of_evaluate_function++;
 
+	if (b.moves_with_kings >= draw_after_moves)
+		return 0;
+
 	// condition of stopping recuretion 
 	if (depth >= 11 || (depth >= max_depth && is_possition_stable(b, color)))
 	{

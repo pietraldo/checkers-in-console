@@ -35,7 +35,7 @@ const bool turn_board = false; // if false board is printed with white on bottom
 
 int main()
 {
-	bool start_position = true;
+	bool start_position = false;
 	int who_move = WHITE;
 
 	int player_color = WHITE;
@@ -64,10 +64,10 @@ int main()
 		b["e7"] = 1;
 		b["g5"] = 1;*/
 
-		b["d4"] = 1;
-		b["e5"] = 2;
-		b["c5"] = 2;
-		b["c7"] = 2;
+		//b["d4"] = 1;
+		b["b8"] = 2;
+		b["a7"] = 4;
+		b["g1"] = 3;
 
 	}
 	
