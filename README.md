@@ -43,6 +43,7 @@ You can change after how many moves with kings there is a draw:
 const int draw_after_moves = 10; 
 ```
 You can print board upside down by changing false to true in line:
+```cpp
 const bool turn_board = false; 
 ```
 
