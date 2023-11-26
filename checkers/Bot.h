@@ -18,21 +18,19 @@ public:
 	static float bot_eval;
 
 	Bot(int color) : color(color) {};
-	float Evaluate(Board& b);
-	Move getBestMove(Board& b);
-	Move getBestMoveBlack(Board& b);
-	Move getBestMoveWhite(Board& b);
 
-	void generateAllMovesToDepth(Board& b, int max_depth,int color, int depth = 1);
-	float evaluateToDepth(Board& b, int max_depth,int color, float alpha, float beta, int depth = 1);
+	// evalutate position on the board
+	float Evaluate(Board& b);
+
+	// main function of bot. it returns the best move for bot
 	Move pickBestMove(Board& b, int max_depth);
+
+	// evaluate position with alpha beta pruning, to the deep of max_deph
+	float evaluateToDepth(Board& b, int max_depth,int color, float alpha, float beta, int depth = 1);
 
 	// returns if possition is stable it means that there are no caputres on eather black or white
 	bool is_possition_stable(Board &b, int color);
 	
-	Move pickBestMoveMultiThreading(Board& b);
-	void evaluateToDepthMultiThreading(Board& b, int max_depth, int color, float alpha, float beta, float& answer, int depth = 1);
-
 	int getColor() { return color; }
 };
 

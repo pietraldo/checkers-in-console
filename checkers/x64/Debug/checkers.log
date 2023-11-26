@@ -1,2 +1,6 @@
-﻿  main.cpp
+﻿  Bot.cpp
+C:\Users\pietr\Documents\programowanie\checkers\checkers\Bot.cpp(83,12): warning C4244: "inicjowanie": konwersja z "int" do "float", możliwa utrata danych
+C:\Users\pietr\Documents\programowanie\checkers\checkers\Bot.cpp(123,17): warning C4244: "inicjowanie": konwersja z "int" do "float", możliwa utrata danych
+  main.cpp
+  Generowanie kodu...
   checkers.vcxproj -> C:\Users\pietr\Documents\programowanie\checkers\x64\Debug\checkers.exe

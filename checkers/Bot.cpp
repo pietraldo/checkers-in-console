@@ -15,11 +15,15 @@ float Bot::Evaluate(Board& b)
 			{
 				case WHITE:
 					white += 1;
+
+					// getting additional points if pawn is after the half of board
 					if (i > 3)
 						white +=(float) (i-3)/4;
 					break;
 				case BLACK:
 					black -= 1;
+
+					// getting additional points if pawn is after the half of board
 					if (i <4)
 						black -= (float)(4-i) / 4;
 					break;
@@ -38,64 +42,6 @@ float Bot::Evaluate(Board& b)
 	return white + black;
 }
 
-Move Bot::getBestMove(Board& b)
-{
-	if (color == WHITE)
-		return getBestMoveWhite(b);
-	return getBestMoveBlack(b);
-}
-Move Bot::getBestMoveWhite(Board& b)
-{
-	cout << "Avaible moves" << endl;
-	list<Move> l;
-	generate_all_moves(l, b, WHITE);
-	return l.front();
-}
-Move Bot::getBestMoveBlack(Board& b)
-{
-	cout << "Avaible moves" << endl;
-	list<Move> l;
-	generate_all_moves(l, b, color);
-
-	Move best = Move(l.front());
-	float best_eval = 10000;
-	for (auto m : l)
-	{
-		Board b2 = Board(b);
-		make_move(b2, m);
-		float current_eval=Evaluate(b2);
-		cout << m << " -> " << current_eval<<endl;
-		if (best_eval > current_eval)
-		{
-			best_eval = current_eval;
-			best = Move(m);
-		}
-	}
-
-
-	return best;
-}
-void Bot::generateAllMovesToDepth(Board& b, int max_depth, int color, int depth)
-{
-	
-	if (depth >= max_depth)
-	{
-		cout << "Depth " << depth << ": " << endl;
-		cout << b << endl;
-		return;
-	}
-		
-
-	list<Move> l;
-	generate_all_moves(l, b, color);
-	for (auto move : l)
-	{
-		Board b2 = Board(b);
-		make_move(b2, move);
-		generateAllMovesToDepth(b2, max_depth, color == WHITE ? BLACK : WHITE, depth+1);
-	}
-}
-
 
 int Bot::number_of_evaluate_function = 0;
 float Bot::bot_eval = 0;
@@ -103,14 +49,10 @@ float Bot::evaluateToDepth(Board& b, int max_depth, int color, float alpha, floa
 {
 	number_of_evaluate_function++;
 
+	// condition of stopping recuretion 
 	if (depth >= 11 || (depth >= max_depth && is_possition_stable(b, color)))
 	{
-		/*cout << "Koniec Depth: " << depth << " Position: " << is_possition_stable(b, color);
-		cout << b;*/
-		float eval = Evaluate(b);
-		/*if (eval == 0.25)
-			cout << b;*/
-		return eval;
+		return Evaluate(b);
 	}
 		
 	list<Move> l;
@@ -159,18 +101,27 @@ Move Bot::pickBestMove(Board& b, int max_depth)
 	float best_eval=color==WHITE?-10000000:10000000;
 	float eval;
 
+	// generate all moves in this possition for bot
 	list<Move> l;
 	generate_all_moves(l, b, color);
+
+	// setting best move to first, just in case
 	best_move = Move(l.front());
+
+	// evaluating every move and picking best
 	for (auto move : l)
 	{
+		// copy bord and make move on board
 		Board b2 = Board(b);
 		make_move(b2, move);
 
+		// evaluate position after move
 		eval=evaluateToDepth(b2, max_depth, color == WHITE ? BLACK : WHITE, -1000000,10000000);
 		cout << "   ";
 		printf("%.2f", eval);
 		cout<< " " << move;
+
+		// checking if this move is better than best. For white is better if eval is high but for black is better is eval is low
 		if (color == WHITE)
 		{
 			if (eval > best_eval)
@@ -188,95 +139,18 @@ Move Bot::pickBestMove(Board& b, int max_depth)
 			}
 		}
 	}
+
+	// just to print as fun fact 
 	bot_eval = best_eval;
+	
 	return best_move;
 }
 
-void Bot::evaluateToDepthMultiThreading(Board& b, int max_depth, int color, float alpha, float beta, float& answer, int depth)
-{
-	number_of_evaluate_function++;
-	//cout << b;
-	if (depth >= max_depth)
-	{
-		answer= Evaluate(b);
-		return;
-	}
-
-	list<Move> l;
-	generate_all_moves(l, b, color);
-
-	float best = color == WHITE ? -1000000 : 10000000;
-	float value;
-
-	for (auto move : l)
-	{
-		Board b2 = Board(b);
-		make_move(b2, move);
-		value = evaluateToDepth(b2, max_depth, color == WHITE ? BLACK : WHITE, alpha, beta, depth + 1);
-
-		if (color == WHITE)
-		{
-			if (value > best)
-			{
-				best = value;
-				alpha = value;
-			}
-		}
-		else
-		{
-			if (value < best)
-			{
-				best = value;
-				beta = value;
-			}
-		}
-
-		if (alpha > beta)
-			break;
-	}
-
-	answer = best;
-}
-
-Move Bot::pickBestMoveMultiThreading(Board& b)
-{
-	Move best_move;
-	float best_eval = color == WHITE ? -10000000 : 10000000;
-	float eval;
-
-	list<Move> l;
-	generate_all_moves(l, b, color);
-	for (auto move : l)
-	{
-		Board b2 = Board(b);
-		make_move(b2, move);
-		float answer;
-		
-		evaluateToDepthMultiThreading(b2, 10, color == WHITE ? BLACK : WHITE, -1000000, 10000000, answer);
-		
-		if (color == WHITE)
-		{
-			if (answer > best_eval)
-			{
-				best_eval = answer;
-				best_move = Move(move);
-			}
-		}
-		else
-		{
-			if (answer < best_eval)
-			{
-				best_eval = answer;
-				best_move = Move(move);
-			}
-		}
-	}
-	bot_eval = best_eval;
-	return best_move;
-}
 
 bool Bot::is_possition_stable(Board& b, int color)
 {
+	// this must be tested
+	// 
 	//return !is_any_capture_on_board(b, color);
 	//return !(is_any_capture_on_board(b, WHITE) || is_any_capture_on_board(b, BLACK));
 	 

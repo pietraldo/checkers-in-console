@@ -35,7 +35,7 @@ const bool turn_board = false; // if false board is printed with white on bottom
 
 int main()
 {
-	bool start_position = false;
+	bool start_position = true;
 	int who_move = WHITE;
 
 	int player_color = WHITE;
