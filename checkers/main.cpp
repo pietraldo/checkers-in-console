@@ -35,7 +35,7 @@ const bool turn_board = false; // if false board is printed with white on bottom
 
 int main()
 {
-	bool start_position = true;
+	bool start_position = false;
 	int who_move = WHITE;
 
 	int player_color = WHITE;
@@ -53,10 +53,22 @@ int main()
 	{
 		int custome_board[64] = { 0 };
 		b = Board(custome_board);
-		b["b8"] = 3;
-		b["d6"] = 2;
+		/*b["b8"] = 3;
+		b["f6"] = 2;
 		b["a5"] = 4;
 		b["a3"] = 1;
+		b["c7"] = 1;
+		b["c5"] = 1;
+		b["f2"] = 1;
+		b["d2"] = 1;
+		b["e7"] = 1;
+		b["g5"] = 1;*/
+
+		b["d4"] = 1;
+		b["e5"] = 2;
+		b["c5"] = 2;
+		b["c7"] = 2;
+
 	}
 	
 	

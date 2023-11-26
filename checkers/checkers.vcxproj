@@ -130,6 +130,7 @@
     <ClCompile Include="Board.cpp" />
     <ClCompile Include="Bot.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Move.cpp" />
     <ClCompile Include="Pawn.cpp" />
   </ItemGroup>
   <ItemGroup>

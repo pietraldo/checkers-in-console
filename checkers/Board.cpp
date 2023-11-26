@@ -2,21 +2,24 @@
 #include <Windows.h>
 #include <iomanip>
 
+// fields that are in printed in another color which mean fields that show move
 vector<Field> color_fields_print = {};
 
 int& Board::operator()(int i, int j)
 {
 	out_of_board = -1;
-	if (i<0 || j<0 || i>=N || j>=N)
+	if (i<0 || j<0 || i>=N || j>=N) // if cordinates points on field that is outside of board
 		return out_of_board;
-	if (!is_it_black_field(i, j))
+	if (!is_it_black_field(i, j)) // if cordinates points to white field
 		return out_of_board;
-	return board[N/2 * i + j / 2 ];
+	return board[N/2 * i + j / 2 ]; // scaling 
 }
+
 int& Board::operator()(Field f)
 {
 	return this->operator()(f.i,f.j);
 }
+
 int& Board::operator[](string s)
 {
 	return this->operator()(s[1] - '1', s[0] - 'a');

@@ -1,3 +1,2 @@
 ﻿  main.cpp
-C:\Users\pietr\Documents\programowanie\checkers\checkers\main.cpp(116,6): warning C4101: "xx": lokalna zmienna, do której nie istnieje odwołanie
   checkers.vcxproj -> C:\Users\pietr\Documents\programowanie\checkers\x64\Debug\checkers.exe
