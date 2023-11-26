@@ -19,7 +19,7 @@ enum colors {
 	color_move_possibility = 4
 };
 
-const bool turn_board = false;
+extern const bool turn_board;
 
 
 class Board

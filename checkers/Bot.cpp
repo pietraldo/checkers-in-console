@@ -168,7 +168,9 @@ Move Bot::pickBestMove(Board& b, int max_depth)
 		make_move(b2, move);
 
 		eval=evaluateToDepth(b2, max_depth, color == WHITE ? BLACK : WHITE, -1000000,10000000);
-		cout  <<eval<<" " << move;
+		cout << "   ";
+		printf("%.2f", eval);
+		cout<< " " << move;
 		if (color == WHITE)
 		{
 			if (eval > best_eval)

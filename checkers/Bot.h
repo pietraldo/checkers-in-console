@@ -8,7 +8,7 @@
 
 using namespace std;
 
-const int draw_after_moves = 10;
+extern const int draw_after_moves;
 
 class Bot
 {

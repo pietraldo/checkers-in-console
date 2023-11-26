@@ -15,159 +15,82 @@ using namespace std;
 
 void move_player(Board&, int);
 void move_computer(Board&, Bot&);
-void double_captures(Board&, Move);
-void double_captures_computer(Board&, Move);
 bool is_end_of_game(Board&, int who_move);
+
+// function reads move from user from console and returns move
+// Board - current board to print, list<Move> moves that player can do, function checks if move given by user is in this list
 Move read_move(Board&, list<Move>& possible_moves);
-int num(string move);
 
-//if even it gives better eval for white
-int MAX_DEPTH = 8;
+// function converts string to number,it is used in read _move 
+int num(string number);
 
+// function returns string which prints number n in format xx.xxx.xxx
+string pretty_number(int n);
+
+// SETTINGS
+
+int MAX_DEPTH = 8; // if even it gives better eval for white because it is white to move
+const int draw_after_moves = 10; // after how many moves with kings there will be draw
+const bool turn_board = false; // if false board is printed with white on bottom
 
 int main()
 {
-	int aa[64] = { 0 };
-	Board b=Board();
-	/*Board b=Board(aa);
-	b["c3"] = 2;
-	b["d6"] = 1;
-	b["e7"] = 2;
-	b["g7"] = 2;
-	b["d2"] = 2;
-	b["e7"] = 2;
-	b["c5"] = 2;
-	b["c3"] = 1;
-	b["e3"] = 2;
-	b["g3"] = 1;
-	b["b6"] = 2;
-	
-	cout << b;*/
-
-	/*b["a1"] = 1;
-	b["d2"] = 1;
-	b["f2"] = 1;
-	b["g1"] = 1;
-	b["h2"] = 1;
-	b["a3"] = 2;
-	b["f8"] = 2;
-	b["g7"] = 2;
-	b["h6"] = 2;*/
-
-	// position from zuzia game
-	/*b["b8"] = 2;
-	b["c7"] = 2;
-	b["a7"] = 2;
-	b["d8"] = 2;
-	b["f8"] = 2;
-	b["g7"] = 2;
-	b["h8"] = 2;
-	b["d6"] = 2;
-	b["f4"] = 2;
-	b["c5"] = 2;
-	b["a5"] = 1;
-	b["a3"] = 1;
-	b["a1"] = 1;
-	b["b2"] = 1;
-	b["c1"] = 1;
-	b["d2"] = 1;
-	b["f2"] = 1;
-	b["e1"] = 1;
-	b["g1"] = 1;
-	b["h2"] = 1;*/
-	// kings and draw
-	/*b["f4"] = 4;
-	b["d8"] = 3;
-	b["h8"] = 2;
-	b["g7"] = 2;*/
-	// win because no moves
-	/*b["b6"] = 2;
-	b["d6"] = 2;
-	b["f6"] = 2;
-	b["h6"] = 2;
-	b["a5"] = 2;
-	b["c5"] = 2;
-	b["e5"] = 2;
-	b["g5"] = 2;
-	b["b8"] = 2;
-	b["d8"] = 2;
-	b["a3"] = 1;
-	b["c3"] = 1;
-	b["e3"] = 1;
-	b["g3"] = 1;
-	b["b4"] = 1;
-	b["d4"] = 1;
-	b["f4"] = 1;
-	b["h4"] = 1;
-	b["c1"] = 1;
-	b["e1"] = 1;
-	b["g1"] = 1;*/
-
-	/*b["b8"] = 2;
-	b["c7"] = 2;
-	b["a7"] = 2;
-	b["d8"] = 2;
-	b["f8"] = 2;
-	b["g7"] = 2;
-	b["h8"] = 2;
-	b["e5"] = 2;
-	b["f4"] = 2;
-	b["c5"] = 2;
-	b["a5"] = 1;
-	b["a3"] = 1;
-	b["a1"] = 1;
-	b["b2"] = 1;
-	b["c1"] = 1;
-	b["d2"] = 1;
-	b["e3"] = 1;
-	b["e1"] = 1;
-	b["g1"] = 1;
-	b["h2"] = 1;*/
-
-	/*b["a7"] = 2;
-	b["b8"] = 2;
-	b["d8"] = 2;
-	b["e7"] = 2;
-	b["e5"] = 2;
-	b["f4"] = 2;
-	b["h8"] = 2;
-	b["b6"] = 1;
-	b["c5"] = 1;
-	b["c3"] = 1;
-	b["c1"] = 1;
-	b["d2"] = 1;
-	b["f2"] = 1;
-	b["h2"] = 1;
-	b["b4"] = 1;
-	b["b2"] = 1;*/
-
-
+	bool start_position = true;
 	int who_move = WHITE;
-	Bot bot(BLACK);
-	//cout << endl << bot.is_possition_stable(b, BLACK);
+
+	int player_color = WHITE;
+	int bot_color = BLACK;
+
+	Bot bot(bot_color);
+	Board b;
+
+	// game starts from start position or from own position
+	if (start_position)
+	{
+		b = Board();
+	}
+	else
+	{
+		int custome_board[64] = { 0 };
+		b = Board(custome_board);
+		b["b8"] = 3;
+		b["d6"] = 2;
+		b["a5"] = 4;
+		b["a3"] = 1;
+	}
+	
+	
+	// main game function. It is repiting until someone win or draw
 	while (!is_end_of_game(b, who_move))
 	{
+		// printing board and some info
 		system("cls");
 		cout << b;
 		cout<<"Evaluate: "<<bot.Evaluate(b)<<endl;
 		cout<<"Bot evaluate: "<<Bot::bot_eval<<endl;
-		cout <<"Number of evaluated positions: " << Bot::number_of_evaluate_function << endl;
+		cout <<"Number of evaluated positions: " << pretty_number(Bot::number_of_evaluate_function) << endl;
 		
+		// clearing fields that they mean prievious move
 		color_fields_print.clear();
-		if (who_move == WHITE)
+
+		// deciding who has move
+		if (who_move == player_color)
 		{
-			cout << "Move player" << endl;
+			cout <<endl<< "Move: player" << endl;
+			move_player(b, player_color);
 
-			move_player(b, WHITE);
-
-			who_move = BLACK;
+			//changing who has now move
+			who_move = bot_color;
 		}
 		else
 		{
+			// counter that show how many positions bot evaluated
 			Bot::number_of_evaluate_function = 0;
-			cout << "Move computer" << endl;
+			cout <<endl << "Move: bot" << endl;
 			move_computer(b, bot);
-			who_move = WHITE;
+
+			//changing who has now move
+			who_move = player_color;
 		}
 		
 	}
@@ -185,18 +108,29 @@ void move_player(Board& b, int color)
 
 Move read_move(Board& b, list<Move>& possible_moves)
 {
-	cout << "Avaible moves:" << endl;
+	// printing all moves that user have
+	cout << "Aviables moves:" << endl;
 	int i = 0; 
 	for (auto a : possible_moves)
 		cout <<++i<<". " << a;
 	cout << "Your move: ";
-	int xx;
 	
+
+	// reading player's move from console
 	string player_move;
 	getline(cin, player_move);
 
-	int number = num(player_move);
+	// checking if player gave move
+	if (player_move.length() == 0)
+	{
+		system("cls");
+		cout << b;
+		cout << endl << "Move is not correct" << endl;
+		return read_move(b, possible_moves);
+	}
 
+	// checking if player gave number which is number of move in list of possible moves
+	int number = num(player_move);
 	if (number >0 && number <=possible_moves.size())
 	{
 		int j=1;
@@ -206,7 +140,8 @@ Move read_move(Board& b, list<Move>& possible_moves)
 				return move;
 		}
 	}
-
+	
+	// sometime user just give first field so reading second field
 	if (player_move.length() == 2)
 	{
 		string player_move2;
@@ -214,7 +149,7 @@ Move read_move(Board& b, list<Move>& possible_moves)
 		player_move += " " + player_move2;
 	}
 	
-	// making move from player move
+	// converting string to move from player_move
 	Move move_p;
 	for (int i = 0; i < player_move.length(); i+=2)
 	{
@@ -230,26 +165,19 @@ Move read_move(Board& b, list<Move>& possible_moves)
 			return move;
 	}
 	
-	cout <<endl<< "Move is not correct" << endl;
+	// wrong move
 	system("cls");
 	cout << b;
+	cout << endl << "Move is not correct" << endl;
 	return read_move(b,possible_moves);
 }
 
 void move_computer(Board& b, Bot& bot)
 {
 	Move bot_move = bot.pickBestMove(b, MAX_DEPTH);
-	/*cout <<"BOT move depth: 3 " << bot_move;
-	for (int i = 4; i <9; i++)
-	{
-		bot_move = bot.pickBestMove(b, i);
-		cout << "BOT move depth: "<<i<<" " << bot_move;
-	}*/
 	make_move(b, bot_move);
 }
 
-
-// conwerting string to number
 int num(string move)
 {
 	int x=0;
@@ -268,9 +196,9 @@ int num(string move)
 	return x;
 }
 
-
 bool is_end_of_game(Board& b, int who_move)
 {
+	// checking if white and black have pawns on the board
 	bool white=false;
 	bool black=false;
 	for (int i = 0; i < N; i++)
@@ -284,10 +212,12 @@ bool is_end_of_game(Board& b, int who_move)
 		}
 	}
 
+	// generate all moves changes coloring of the last move but is must stay the same so i make a copy
+	vector<Field> color_fields_print2 = color_fields_print;
+
 	bool end = false;
 	list<Move> l;
-	vector<Field> color_fields_print2 = color_fields_print;
-	if (!generate_all_moves(l, b, who_move)) // loses who's move it is
+	if (!generate_all_moves(l, b, who_move)) // someone dosn't have any moves so  loses who's move it is
 	{
 		system("cls");
 		cout << b;
@@ -316,20 +246,26 @@ bool is_end_of_game(Board& b, int who_move)
 		end = true;
 	}
 
+	// returning previous coloring
 	color_fields_print = color_fields_print2;
 
 	return end;
 }
 
-
-/*
- promotes pawn only at the end of move ( there is not somthing like go last row promote and capture as a  king
-
- there is obligatory capture of maximum pawns or kings
-
- pawn and kings can capture forward and backwords
-
- after draw_move_kings there is draw
-
-
-*/
+string pretty_number(int n)
+{
+	string number="";
+	int three = 0;
+	while (n > 0)
+	{
+		if (three == 3)
+		{
+			three = 0;
+			number = "." + number;
+		}
+		number = (char)('0' + n % 10) + number;
+		n = n / 10;
+		three++;
+	}
+	return number;
+}
